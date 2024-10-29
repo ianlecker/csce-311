@@ -1,3 +1,6 @@
+// Copyright 2024 Ian Lecker
+// slopySim.cpp
+
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
