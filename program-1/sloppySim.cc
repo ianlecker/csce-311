@@ -61,7 +61,7 @@ void* threadFunction(void* arg) {
             // CPU-bound work
             for (int j = 0; j < data->workTime * 1000000; ++j) {}
         } else {
-            // I/O-bound work with random time between 0.5 and 1.5 times workTime
+        // I/O-bound work with random time between 0.5 and 1.5 times workTime
             int sleepTime = (data->workTime * (500 + (rand_r(&seed) % 1000))) / 1000; // This is in milliseconds
             usleep(sleepTime * 1000); // Convert to microseconds
 
@@ -112,25 +112,12 @@ int main(int argc, char* argv[]) {
     }
     
     // Parse arguments with defaults
-    int nThreads, sloppiness, workTime, workIterations;
-    bool cpuBound, doLogging;
-
-    try {
-        nThreads = std::stoi(argv[1]);
-        sloppiness = std::stoi(argv[2]);
-        workTime = std::stoi(argv[3]);
-        workIterations = std::stoi(argv[4]);
-        
-        // Accept "true" or "false" as valid inputs
-        cpuBound = (strcmp(argv[5], "true") == 0);
-        doLogging = (strcmp(argv[6], "true") == 0);
-    } catch (std::invalid_argument& e) {
-        cout << "Invalid argument." << std::endl;
-        return 1;
-    } catch (std::out_of_range& e) {
-        cout << "Number out of range." << std::endl;
-        return 1;
-    }
+    int nThreads = (argc > 1) ? std::stoi(argv[1]) : DEFAULT_THREADS;
+    int sloppiness = (argc > 2) ? std::stoi(argv[2]) : DEFAULT_SLOP;
+    int workTime = (argc > 3) ? std::stoi(argv[3]) : DEFAULT_WORK_TIME;
+    int workIterations = (argc > 4) ? std::stoi(argv[4]) : DEFAULT_ITERATIONS;
+    bool cpuBound = (argc > 5) ? (strcmp(argv[5], "true") == 0) : DEFAULT_CPU_BOUND;
+    bool doLogging = (argc > 6) ? (strcmp(argv[6], "true") == 0) : DEFAULT_LOGGING;
     
     // Print out settings
     cout << "Settings:\n"
