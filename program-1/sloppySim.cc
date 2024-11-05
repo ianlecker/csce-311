@@ -125,10 +125,10 @@ int main(int argc, char* argv[]) {
         cpuBound = (strcmp(argv[5], "true") == 0);
         doLogging = (strcmp(argv[6], "true") == 0);
     } catch (std::invalid_argument& e) {
-        cout << "Invalid argument: " << e.what() << std::endl;
+        cout << "Invalid argument." << std::endl;
         return 1;
     } catch (std::out_of_range& e) {
-        cout << "Number out of range: " << e.what() << std::endl;
+        cout << "Number out of range." << std::endl;
         return 1;
     }
     
