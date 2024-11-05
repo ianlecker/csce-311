@@ -89,7 +89,8 @@ void* threadFunction(void* arg) {
 }
 
 void printBuckets(const SharedData& shared, int nThreads) {
-    cout << "[";
+
+    cout << "Local Buckets: [";
     for (int i = 0; i < nThreads; ++i) {
         cout << shared.localBuckets[i];
         if (i < nThreads - 1) cout << ",";
