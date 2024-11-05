@@ -4,7 +4,7 @@ COMPILER = g++
 COMPILER_FLAGS = -pthread
 
 
-all: sloppySim:
+all: sloppySim
 	$(COMPILER) $(COMPILERFLAGS) sloppySim.cc -o sloppySim
 
 targs: thread_args.cc 
