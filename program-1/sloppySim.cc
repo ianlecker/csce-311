@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
     }
     
     for (int i = 0; i < nThreads; ++i) { // join threads upon completion
-        pthread_detach(threads[i]);
+        pthread_join(threads[i], nullptr);
     }
     
     if (doLogging) {
