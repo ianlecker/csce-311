@@ -52,6 +52,8 @@ struct ThreadData {
 void* threadFunction(void* arg) {
     ThreadData* data = static_cast<ThreadData*>(arg); // ensures the arg is in the
     // ThreadData format
+
+    unsigned int seed = time(nullptr) + data->threadIndex; // unique RNG seed per thread
     
     // Work simulation loop
     for (int i = 0; i < data->workIterations; ++i) {
@@ -59,9 +61,10 @@ void* threadFunction(void* arg) {
             // CPU-bound work
             for (int j = 0; j < data->workTime * 1000000; ++j) {}
         } else {
-            // I/O-bound work with random time between 0.5 and 1.5 times workTime
-            int sleepTime = (data->workTime * (500 + (rand() % 1000))) / 1000;
-            usleep(sleepTime * 1000);
+           // I/O-bound work with random time between 0.5 and 1.5 times workTime
+int sleepTime = (data->workTime * (500 + (rand_r(&seed) % 1000))) / 1000; // This is in milliseconds
+usleep(sleepTime * 1000); // Convert to microseconds
+
         }
         
         data->shared->localBuckets[data->threadIndex]++; // once a piece of "work" is done, 
