@@ -8,7 +8,7 @@
 #include <ctime>
 #include <cstring>
 
-// Using statments
+// Using statements
 using std::cout;
 using std::vector;
 
@@ -50,8 +50,7 @@ struct ThreadData {
 };
 
 void* threadFunction(void* arg) {
-    ThreadData* data = static_cast<ThreadData*>(arg); // ensures the arg is in the
-    // ThreadData format
+    ThreadData* data = static_cast<ThreadData*>(arg); // ensures the arg is in the ThreadData format
 
     unsigned int seed = time(nullptr) + data->threadIndex; // unique RNG seed per thread
     
@@ -61,14 +60,12 @@ void* threadFunction(void* arg) {
             // CPU-bound work
             for (int j = 0; j < data->workTime * 1000000; ++j) {}
         } else {
-        // I/O-bound work with random time between 0.5 and 1.5 times workTime
+            // I/O-bound work with random time between 0.5 and 1.5 times workTime
             int sleepTime = (data->workTime * (500 + (rand_r(&seed) % 1000))) / 1000; // This is in milliseconds
             usleep(sleepTime * 1000); // Convert to microseconds
-
         }
         
-        data->shared->localBuckets[data->threadIndex]++; // once a piece of "work" is done, 
-        // then increment the thread's local bucket
+        data->shared->localBuckets[data->threadIndex]++; // increment the thread's local bucket
         
         // Update global counter once the number of work units is greater than the sloppiness
         if (data->shared->localBuckets[data->threadIndex] >= data->sloppiness) {
@@ -79,8 +76,7 @@ void* threadFunction(void* arg) {
         }
     }
     
-    // if after the work iterations there is left over work units
-    // but not more than the sloppiness factor, add them to global counter
+    // if after the work iterations there are leftover work units
     if (data->shared->localBuckets[data->threadIndex] > 0) {
         pthread_mutex_lock(&data->shared->counterMutex);
         data->shared->globalCounter += data->shared->localBuckets[data->threadIndex];
@@ -88,6 +84,7 @@ void* threadFunction(void* arg) {
         pthread_mutex_unlock(&data->shared->counterMutex);
     }
     
+    delete data; // Free the memory allocated for thread data
     return nullptr;
 }
 
@@ -101,13 +98,12 @@ void printBuckets(const SharedData& shared, int nThreads) {
 }
 
 int main(int argc, char* argv[]) {
-    
     srand(time(nullptr)); // important for RNG
-    
-   
-    if (argc < 1 || argc > 7) {
+
+    // Correct argument count check
+    if (argc < 2 || argc > 8) {
         cout << "Usage: sloppySim <N_Threads> <Sloppiness> <work_time> "
-                  << "<work_iterations> <CPU_BOUND> <Do_Logging>\n";
+                "<work_iterations> <CPU_BOUND> <Do_Logging>\n";
         return 1;
     }
     
@@ -126,18 +122,16 @@ int main(int argc, char* argv[]) {
          << "\nWork Time: " << workTime << "ms"
          << "\nIterations: " << workIterations
          << "\nCPU Bound: " << (cpuBound ? "true" : "false")
-         << "\nLogging: true\n";
+         << "\nLogging: " << (doLogging ? "true" : "false") << "\n";
     
     // Initialize shared data
     SharedData shared(nThreads);
     vector<pthread_t> threads(nThreads);
-    vector<ThreadData> threadData;
     
     // Create threads
     for (int i = 0; i < nThreads; ++i) {
-        ThreadData threadDataObject(i, sloppiness, workTime, workIterations, cpuBound, &shared);
-        threadData.push_back(threadDataObject);
-        pthread_create(&threads[i], nullptr, threadFunction, &threadData[i]);
+        ThreadData* threadDataObject = new ThreadData(i, sloppiness, workTime, workIterations, cpuBound, &shared);
+        pthread_create(&threads[i], nullptr, threadFunction, threadDataObject);
     }
     
     // Logging loop if enabled
