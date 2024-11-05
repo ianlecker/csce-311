@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
     srand(time(nullptr)); // important for RNG
 
     // Correct argument count check
-    if (argc < 2 || argc > 8) {
+    if (argc < 1 || argc > 7) {
         cout << "Usage: sloppySim <N_Threads> <Sloppiness> <work_time> "
                 "<work_iterations> <CPU_BOUND> <Do_Logging>\n";
         return 1;
