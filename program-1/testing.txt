@@ -1,5 +1,4 @@
-testing.txt
-ian lecker
+Terminal Output Using Cat
 
 Settings:
 Threads: 1
@@ -156,3 +155,111 @@ Iterations: 100
 CPU Bound: false
 Logging: false
 Final Global Counter: 200
+
+Testing Summary
+
+Overview of Tests
+
+1. Test 1: Single Thread, I/O Bound
+   - Settings: 
+     - Threads: 1
+     - Sloppiness: 1
+     - Work Time: 1ms
+     - Iterations: 1000
+     - CPU Bound: false
+   - Results: 
+     - The global counter increased steadily with each iteration, reaching a max of 1000. 
+   - Explanation: 
+     - In this I/O-bound scenario, the program was able to process the iterations linearly with one thread.
+
+2. Test 2: Single Thread, CPU Bound
+   - Settings: 
+     - Threads: 1
+     - Sloppiness: 1
+     - Work Time: 1ms
+     - Iterations: 1000
+     - CPU Bound: true
+   - Results: 
+     - The global counter reached 1000, but the increments were slower compared to the I/O-bound test, indicating higher contention for CPU resources.
+   - Explanation: 
+     - The CPU-bound workload limited performance due to a single thread's inability to leverage multiple cores.
+
+3. Test 3: Two Threads, I/O Bound
+   - Settings: 
+     - Threads: 2
+     - Sloppiness: 1
+     - Work Time: 1ms
+     - Iterations: 1000
+     - CPU Bound: false
+   - Results: 
+     - The global counter increased more rapidly, reaching 2000.
+   - Explanation: 
+     - The additional thread allowed for better utilization of I/O operations, leading to improved performance.
+
+4. Test 4: Two Threads, CPU Bound
+   - Settings: 
+     - Threads: 2
+     - Sloppiness: 1
+     - Work Time: 1ms
+     - Iterations: 1000
+     - CPU Bound: true
+   - Results: 
+     - The global counter also reached 2000, but increments were slower compared to the I/O-bound test with two threads.
+   - Explanation: 
+     - While two threads improved throughput, CPU contention limited efficiency.
+
+5. Test 5: Two Threads, I/O Bound (Higher Sloppiness and Work Time)
+   - Settings: 
+     - Threads: 2
+     - Sloppiness: 10
+     - Work Time: 10ms
+     - Iterations: 1000
+     - CPU Bound: false
+   - Results: 
+     - The global counter reached 2000, with performance scaling better due to relaxed constraints on thread sloppiness.
+   - Explanation: 
+     - Increasing sloppiness and work time allows threads to yield more easily, enhancing I/O-bound operations.
+
+6. Test 6: Two Threads, CPU Bound (Higher Sloppiness and Work Time)
+   - Settings: 
+     - Threads: 2
+     - Sloppiness: 10
+     - Work Time: 10ms
+     - Iterations: 100
+     - CPU Bound: true
+   - Results: 
+     - The global counter only reached 200, indicating very low amounts of work processed.
+   - Explanation: 
+     - Increased sloppiness did not compensate for CPU-bound contention, and the threads were unable to execute efficiently.
+
+7. Test 7: Forty Threads, I/O Bound
+   - Settings: 
+     - Threads: 40
+     - Sloppiness: 10
+     - Work Time: 25ms
+     - Iterations: 100
+     - CPU Bound: false
+   - Results: 
+     - The global counter reached 4000, showing significant performance improvement with many threads.
+   - Explanation: 
+     - High thread count was beneficial for I/O-bound workloads, showing effective scaling.
+
+8. Test 8: Forty Threads, CPU Bound
+   - Settings: 
+     - Threads: 40
+     - Sloppiness: 10
+     - Work Time: 25ms
+     - Iterations: 100
+     - CPU Bound: true
+   - Results: 
+     - The global counter remained at 0 or very low, indicating that the CPU could not handle so many threads efficiently.
+   - Explanation: 
+     - This test demonstrates that beyond a certain point, adding more threads can degrade performance due to lots of context switching.
+
+Conclusions
+The results from the tests illustrate how threading affects performance differently depending on whether the workload is CPU-bound or I/O-bound. 
+
+- For I/O-bound tasks, increasing the number of threads generally improves the work that can be done, demonstrating good scalability.
+- For CPU-bound tasks, while two threads improved performance over one, too many threads lead to diminishing returns and can even reduce performance in extreme cases.
+
+These tests show the importance of optimizing thread usage based on their requirements
