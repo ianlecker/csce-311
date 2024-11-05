@@ -1,3 +1,5 @@
+// Copyright Ian Lecker
+
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
@@ -5,12 +7,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
-#include <chrono> // Include for timing
 
 // Using statements
 using std::cout;
 using std::vector;
-using namespace std::chrono; // For time handling
 
 // Defaults
 const int DEFAULT_THREADS = 2;
@@ -88,8 +88,7 @@ void* threadFunction(void* arg) {
     return nullptr;
 }
 
-void printBuckets(const SharedData& shared, int nThreads, long long elapsedMillis) {
-    cout << "Elapsed Time: " << elapsedMillis << " ms, Buckets: [";
+void printBuckets(const SharedData& shared, int nThreads) {
     for (int i = 0; i < nThreads; ++i) {
         cout << shared.localBuckets[i];
         if (i < nThreads - 1) cout << ",";
@@ -114,9 +113,6 @@ int main(int argc, char* argv[]) {
     int workIterations = (argc > 4) ? std::stoi(argv[4]) : DEFAULT_ITERATIONS;
     bool cpuBound = (argc > 5) ? (strcmp(argv[5], "true") == 0) : DEFAULT_CPU_BOUND;
     bool doLogging = (argc > 6) ? (strcmp(argv[6], "true") == 0) : DEFAULT_LOGGING;
-    
-    // Start timing
-    auto startTime = high_resolution_clock::now();
 
     // Print out settings
     cout << "Settings:\n"
@@ -142,9 +138,7 @@ int main(int argc, char* argv[]) {
         int loggingInterval = workTime * workIterations / 10;
         for (int i = 0; i < 9; ++i) {
             usleep(loggingInterval * 1000);
-            auto nowTime = high_resolution_clock::now();
-            auto elapsedTime = duration_cast<milliseconds>(nowTime - startTime).count();
-            printBuckets(shared, nThreads, elapsedTime);
+            printBuckets(shared, nThreads);
         }
     }
     
@@ -154,9 +148,7 @@ int main(int argc, char* argv[]) {
     
     // Final output after all threads have finished
     if (doLogging) {
-        auto nowTime = high_resolution_clock::now();
-        auto elapsedTime = duration_cast<milliseconds>(nowTime - startTime).count();
-        printBuckets(shared, nThreads, elapsedTime);
+        printBuckets(shared, nThreads);
     } else {
         cout << "Final Global Counter: " << shared.globalCounter << std::endl;
     }
